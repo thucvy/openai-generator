@@ -10,9 +10,25 @@ import {
   Col,
 } from "react-bootstrap";
 
+const storageKey = "productDescResults";
+const toHour = ms => Number((ms / (1000 * 60 * 60)).toFixed(2));
+
+const storeDataLocally = data => {
+  const dataObj = {
+    date: Date.now(),
+    data
+  };
+  localStorage.setItem(storageKey, JSON.stringify(dataObj));
+};
+
+const getDataLocally = () => {
+  const dataObj = localStorage.getItem(storageKey);
+  return JSON.parse(dataObj);
+};
+
 const ProductDesc = () => {
   const [productInput, setProductInput] = useState("");
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState();
   const [error, setError] = useState();
 
   // function to get API from OpenAI
@@ -37,36 +53,52 @@ const ProductDesc = () => {
       if (!response) {
         throw new Error("Sorry something went wrong. Please try again");
       }
+      let resultsArray = []
       if (results) {
-        setResults([
+        resultsArray = [
           {
             input: productInput,
             response: response.data.choices[0].text,
           },
           ...results,
-        ]);
+        ];
       } else {
-        setResults([
+        resultsArray = [
           {
             input: productInput,
             response: response.data.choices[0].text,
           },
-        ]);
+        ];
       }
+      setResults(resultsArray)
+      storeDataLocally(resultsArray)
     } catch (error) {
       setError(error.message);
     }  
   };
 
+  useEffect(() => {
+    const localObj = getDataLocally();
+    let shouldGetDataFromserver = false;
+    if (localObj) {
+      const isOneHourAgo =
+        toHour(new Date()) - toHour(Number(localObj.date)) > 1;
+      if (isOneHourAgo) {
+        shouldGetDataFromserver = true;
+      }
+    } else {
+      shouldGetDataFromserver = true;
+    }
+
+    !shouldGetDataFromserver && setResults(localObj.data);
+  }, [])
+
   const onFormSubmit = (e) => {
     e.preventDefault();
     productInput && getAI(productInput);
     !productInput && setError("Please provide your input");
-    console.log(results);
-    localStorage.setItem(results, JSON.stringify(results))
     setProductInput("");
   };
-  console.log('outside: ', results)
 
 
   //building results list
@@ -78,7 +110,6 @@ const ProductDesc = () => {
           <Card.Header>
             <Row>
               <Col sm={3} style={{ fontWeight: "bold" }}>
-                {" "}
                 Input:
               </Col>
               <Col sm={9}>{result.input}</Col>
@@ -87,7 +118,6 @@ const ProductDesc = () => {
           <Card.Body>
             <Row>
               <Col sm={3} style={{ fontWeight: "bold" }}>
-                {" "}
                 AI Response:
               </Col>
               <Col sm={9}>{result.response}</Col>
@@ -97,10 +127,6 @@ const ProductDesc = () => {
       );
     });
 
-    
-  useEffect(() => {
-    console.log('try use effect')
-    }, [])
 
   return (
     <Container>
