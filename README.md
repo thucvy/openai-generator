@@ -1,6 +1,6 @@
 # Getting Started to Write Better with OpenAI!
 
-This project is using a powerful AI model created by [OepnAI](https://openai.com/api/) called GPT-3 to process inputs from users and produce helpful responses for specific purposes. In particular, this app is intended for whom in need of improving their writing skills and want to have fun with smart writing using AI technology.
+This project is using a powerful AI model created by [OpenAI](https://openai.com/api/) called GPT-3 to process inputs from users and produce helpful responses for specific purposes. In particular, this app is intended for whom in need of improving their writing skills and want to have fun with smart writing using AI technology.
 
 ## Instructions
 
