@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { Link } from "react-router-dom";
+
 import {
   Container,
   Form,
@@ -10,26 +12,33 @@ import {
   Col,
 } from "react-bootstrap";
 
-const storageKey = "productDescResults";
-const toHour = ms => Number((ms / (1000 * 60 * 60)).toFixed(2));
+import goBackImgSrc from "../goback.png";
 
-const storeDataLocally = data => {
-  const dataObj = {
-    date: Date.now(),
-    data
-  };
-  localStorage.setItem(storageKey, JSON.stringify(dataObj));
-};
+const toHour = (ms) => Number((ms / (1000 * 60 * 60)).toFixed(2));
 
-const getDataLocally = () => {
-  const dataObj = localStorage.getItem(storageKey);
-  return JSON.parse(dataObj);
-};
+const BaseForm = (props) => {
+  const {
+    imgSrc,
+    alt,
+    header,
+    storageKey,
+    prompt,
+    formLabel,
+    placeHolder,
+    notice,
+  } = props;
 
-const ProductDesc = () => {
-  const [productInput, setProductInput] = useState("");
+  const [promptInput, setPromptInput] = useState("");
   const [results, setResults] = useState();
   const [error, setError] = useState();
+
+  const storeDataLocally = (data) => {
+    const dataObj = {
+      date: Date.now(),
+      data,
+    };
+    localStorage.setItem(storageKey, JSON.stringify(dataObj));
+  };
 
   // function to get API from OpenAI
   const getAI = async () => {
@@ -43,23 +52,23 @@ const ProductDesc = () => {
       delete configuration.baseOptions.headers["User-Agent"];
       const openai = new OpenAIApi(configuration);
       const response = await openai.createCompletion("text-curie-001", {
-        prompt: `Write a detailed, smart, informative and professional product description for ${productInput}`,
-        temperature: 0.6,
-        max_tokens: 50,
+        prompt: `${prompt} ${promptInput}`,
+        temperature: 0.8,
+        max_tokens: 100,
         top_p: 1,
-        frequency_penalty: 0,
+        frequency_penalty: 0.5,
         presence_penalty: 0,
       });
       if (!response) {
         throw new Error("Sorry something went wrong. Please try again");
       }
-      let resultsArray = []
-      let res = response.data.choices[0].text
-      if (!res.endsWith('.')) res += '...'
+      let resultsArray = [];
+      let res = response.data.choices[0].text;
+      if (!res.endsWith(".")) res += "...";
       if (results) {
         resultsArray = [
           {
-            input: productInput,
+            input: promptInput,
             response: res,
           },
           ...results,
@@ -67,19 +76,24 @@ const ProductDesc = () => {
       } else {
         resultsArray = [
           {
-            input: productInput,
+            input: promptInput,
             response: res,
           },
         ];
       }
-      setResults(resultsArray)
-      storeDataLocally(resultsArray)
+      setResults(resultsArray);
+      storeDataLocally(resultsArray);
     } catch (error) {
       setError(error.message);
-    }  
+    }
   };
 
   useEffect(() => {
+    const getDataLocally = () => {
+      const dataObj = localStorage.getItem(storageKey);
+      return JSON.parse(dataObj);
+    };
+
     const localObj = getDataLocally();
     let shouldGetDataFromserver = false;
     if (localObj) {
@@ -93,15 +107,14 @@ const ProductDesc = () => {
     }
 
     !shouldGetDataFromserver && setResults(localObj.data);
-  }, [])
+  }, [storageKey]);
 
   const onFormSubmit = (e) => {
     e.preventDefault();
-    productInput && getAI(productInput);
-    !productInput && setError("Please provide your input");
-    setProductInput("");
+    promptInput && getAI(promptInput);
+    !promptInput && setError("Please provide your input");
+    setPromptInput("");
   };
-
 
   //building results list
   const renderedProductList =
@@ -121,6 +134,12 @@ const ProductDesc = () => {
             <Row>
               <Col sm={3} style={{ fontWeight: "bold" }}>
                 AI Response:
+                <p
+                  className="text-muted"
+                  style={{ fontWeight: "lighter", fontSize: "0.9em" }}
+                >
+                  (Max. 80 words)
+                </p>
               </Col>
               <Col sm={9}>{result.response}</Col>
             </Row>
@@ -129,26 +148,44 @@ const ProductDesc = () => {
       );
     });
 
-
   return (
     <Container>
+      <Link
+        to="/"
+        style={{
+          textDecoration: "none",
+          color: "black",
+          display: "flex",
+          fontStyle: "italic"
+        }}
+      >
+        <img
+          src={goBackImgSrc}
+          alt="Go Back"
+          style={{ width: "30px", marginBottom: "20px", marginRight: "10px" }}
+        />{" "}
+        Back to Home
+      </Link>
+
+      <h1>
+        <img
+          src={imgSrc}
+          alt={alt}
+          style={{ width: "50px", marginRight: "20px" }}
+        />
+        {header}
+      </h1>
       <Form onSubmit={onFormSubmit} style={{ marginBottom: "50px" }}>
         <Form.Group className="mb-3" controlId="formProduct">
-          <Form.Label>
-            What product would you like to get a description for?
-          </Form.Label>
+          <Form.Label>{formLabel}</Form.Label>
           <Form.Control
             as="textarea"
             rows={5}
-            name="productName"
-            placeholder="Enter Product Name"
-            value={productInput}
-            onChange={(e) => setProductInput(e.target.value)}
+            placeholder={placeHolder}
+            value={promptInput}
+            onChange={(e) => setPromptInput(e.target.value)}
           />
-          <Form.Text className="text-muted">
-            Enter as much information as possible for more accurate
-            descriptions.
-          </Form.Text>
+          <Form.Text className="text-muted">{notice}</Form.Text>
         </Form.Group>
 
         <Button variant="primary" type="submit">
@@ -160,10 +197,10 @@ const ProductDesc = () => {
           {error}
         </Alert>
       )}
-      {results && <h1>Response</h1>}
+      {results && <h1>Responses</h1>}
       {renderedProductList}
     </Container>
   );
 };
 
-export default ProductDesc;
+export default BaseForm;
