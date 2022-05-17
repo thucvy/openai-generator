@@ -21,5 +21,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 AI response is limited to 100 words only so you may find some responses incomplete. In those cases, there will be a sign of '...' included at the end of each response.
 
+Responses will be saved for 1 hour only due to security concern. Within 1 hour, you can leave the page or reload the page without losing your data.
+
 Make sure your input is clear and specific enough in order to generate an accurate response for your purpose.
 
