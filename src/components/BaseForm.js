@@ -138,7 +138,7 @@ const BaseForm = (props) => {
                   className="text-muted"
                   style={{ fontWeight: "lighter", fontSize: "0.9em" }}
                 >
-                  (Max. 80 words)
+                  (Max. 100 words)
                 </p>
               </Col>
               <Col sm={9}>{result.response}</Col>
