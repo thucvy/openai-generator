@@ -54,11 +54,13 @@ const ProductDesc = () => {
         throw new Error("Sorry something went wrong. Please try again");
       }
       let resultsArray = []
+      let res = response.data.choices[0].text
+      if (!res.endsWith('.')) res += '...'
       if (results) {
         resultsArray = [
           {
             input: productInput,
-            response: response.data.choices[0].text,
+            response: res,
           },
           ...results,
         ];
@@ -66,7 +68,7 @@ const ProductDesc = () => {
         resultsArray = [
           {
             input: productInput,
-            response: response.data.choices[0].text,
+            response: res,
           },
         ];
       }
