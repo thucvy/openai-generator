@@ -2,6 +2,7 @@
 
 This project is using a powerful AI model created by [OpenAI](https://openai.com/api/) called GPT-3 to process inputs from users and produce helpful responses for specific purposes. In particular, this app is intended for people who want to improve their writing skills and have fun with smart writing using AI technology.
 
+App URL: https://openai-generator.pages.dev/
 ## Instructions
 
 Before having fun with this project and its code, make sure you have [Node and npm](https://nodejs.org/en/) installed on your machine.
