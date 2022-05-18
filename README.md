@@ -16,7 +16,12 @@ After cloning the code to your local, run:
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
+There are 3 main categories within the app for you to utilize and get help from AI technology to become a better writer:
+1. Formal Letter Template: for when you're struggled with how to start writing a formal or professional letter to someone (school, employer, seniors, etc.). Just provide the topic or purpose of your letter, this tool will help provide a template for your letter.
 
+2. Essay Outline Template: for when you're not sure how to outline your essay appropriately or what information should be included in your essay (any topics at your choice), this tool will help provide a comprehensive outline to help you start with.
+
+3. Grammar Corrector: everybody makes mistakes! We got it. That's why this tool is developed to help you check and ensure your writing is correct in standard English by taking into account of grammar, spelling, and punctuation errors.
 
 ## Notes
 
